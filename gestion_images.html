@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes de Cours: Gestion des Images Docker</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ajout de la police Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Définition de la police Inter comme police par défaut */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Style pour les panneaux d'accordéon (fermés par défaut) */
+        .content-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        /* Style pour les panneaux d'accordéon ouverts */
+        .content-panel.open {
+            max-height: 3000px; /* Augmenté pour plus de contenu */
+            transition: max-height 0.5s ease-in;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+        
+        <!-- En-tête -->
+        <header class="p-6 md:p-8 bg-blue-600 text-white relative overflow-hidden">
+            <h1 class="text-3xl md:text-4xl font-bold">Notes de Cours: Docker</h1>
+            <p class="text-xl md:text-2xl text-blue-100 mt-1">Gestion des Images Docker</p>
+            <!-- Élément visuel abstrait -->
+            <div class="absolute -right-16 -bottom-24">
+                <svg width="240" height="240" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M164.5 100C164.5 135.621 135.621 164.5 100 164.5C64.3792 164.5 35.5 135.621 35.5 100C35.5 64.3792 64.3792 35.5 100 35.5C135.621 35.5 164.5 64.3792 164.5 100Z" stroke="white" stroke-opacity="0.1" stroke-width="30"/>
+                </svg>
+            </div>
+        </header>
+
+        <main class="p-6 md:p-8">
+
+            <p class="text-lg text-gray-700 mb-6">Cette fiche de révision est basée sur l'article <a href="https://www.devopssec.fr/article/fonctionnement-manipulation-images-docker" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">Fonctionnement et manipulation des images Docker</a> de Devopssec.fr.</p>
+
+            <!-- Section Accès Rapide -->
+            <nav class="mb-8 p-4 bg-gray-50 rounded-lg border">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Accès Rapide</h3>
+                <div class="flex flex-wrap gap-3">
+                    <a href="#theorie" class="bg-blue-100 text-blue-700 font-medium py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors">
+                        1. Théorie et Fonctionnement
+                    </a>
+                    <a href="#pratique" class="bg-blue-100 text-blue-700 font-medium py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors">
+                        2. Commandes de Manipulation
+                    </a>
+                    <a href="#cheatsheet" class="bg-blue-100 text-blue-700 font-medium py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors">
+                        3. Aide-Mémoire
+                    </a>
+                    <!-- Ajouts -->
+                    <a href="#tp" class="bg-green-100 text-green-700 font-medium py-2 px-4 rounded-lg hover:bg-green-200 transition-colors">
+                        4. TP (Exercices)
+                    </a>
+                    <a href="#questionnaire" class="bg-purple-100 text-purple-700 font-medium py-2 px-4 rounded-lg hover:bg-purple-200 transition-colors">
+                        5. Questionnaire
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Section 1: Théorie et Fonctionnement -->
+            <section id="theorie" class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-blue-700">📖 1. Théorie et Fonctionnement</h2>
+                
+                <!-- Item 1: Qu'est-ce qu'une image Docker ? -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <button class="accordion-toggle w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-700">A. Qu'est-ce qu'une image Docker ?</span>
+                        <svg class="accordion-icon w-6 h-6 text-gray-500 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="content-panel p-6 border-t">
+                        <p class="mb-4">Une image Docker est un **package** qui inclut tout ce qui est nécessaire à l'exécution d'une application. C'est un **modèle en lecture seule**.</p>
+                        <p class="mb-2">Elle contient :</p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                            <li>Le <strong>code</strong> de l'application.</li>
+                            <li>L'<strong>environnement d'exécution</strong> (ex: Node.js, Python).</li>
+                            <li>Les <strong>bibliothèques</strong> et dépendances.</li>
+                            <li>Les <strong>variables d'environnement</strong>.</li>
+                            <li>Les <strong>fichiers de configuration</strong>.</li>
+                        </ul>
+                        <p>Une image est créée à partir d'un fichier de commandes appelé <code>Dockerfile</code>.</p>
+                    </div>
+                </div>
+
+                <!-- Item 2: Image vs Conteneur -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <button class="accordion-toggle w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-700">B. Différence Image vs Conteneur</span>
+                        <svg class="accordion-icon w-6 h-6 text-gray-500 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="content-panel p-6 border-t">
+                        <p class="mb-4">Il est crucial de bien les différencier :</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Carte Image -->
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <h4 class="text-xl font-semibold text-blue-800">Image (Le "Modèle")</h4>
+                                <ul class="list-disc list-inside mt-2 text-blue-700 space-y-1">
+                                    <li><b>État :</b> Passif, immuable (lecture seule).</li>
+                                    <li><b>Analogie :</b> Une recette, un plan, un <i>snapshot</i>.</li>
+                                    <li><b>Création :</b> Construite depuis un <code>Dockerfile</code>.</li>
+                                </ul>
+                            </div>
+                            <!-- Carte Conteneur -->
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                <h4 class="text-xl font-semibold text-green-800">Conteneur (L'"Instance")</h4>
+                                <ul class="list-disc list-inside mt-2 text-green-700 space-y-1">
+                                    <li><b>État :</b> Actif, vivant (processus en cours).</li>
+                                    <li><b>Analogie :</b> Le gâteau préparé, la maison construite.</li>
+                                    <li><b>Création :</b> Lancé depuis une image (ex: <code>docker run</code>).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3: Le Système de Fichiers en Couches (UnionFS) -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <button class="accordion-toggle w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-700">C. Le Système de Fichiers en Couches</span>
+                        <svg class="accordion-icon w-6 h-6 text-gray-500 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="content-panel p-6 border-t">
+                        <p class="mb-4">Une image est composée de plusieurs **couches** superposées. Chaque couche représente une instruction du <code>Dockerfile</code> (ex: une couche pour l'OS, une pour Apache, une pour PHP, etc.).</p>
+                        
+                        <!-- Schéma SVG ajouté ici -->
+                        <div class="my-4 p-4 bg-gray-100 rounded-lg border text-center">
+                            <!-- Remplacement du placeholder par un SVG -->
+                            <svg width="100%" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" class="mx-auto" aria-labelledby="schema-title" role="img">
+                                <title id="schema-title">Schéma du système de fichiers en couches Docker</title>
+                                
+                                <!-- Légende -->
+                                <text x="10" y="20" font-family="Inter, sans-serif" font-size="12" fill="#555">Couche Inscriptible (Conteneur)</text>
+                                <rect x="8" y="28" width="18" height="10" fill="#c4f1c4" stroke="#4a9b4a" stroke-width="1"/>
+                                
+                                <text x="10" y="55" font-family="Inter, sans-serif" font-size="12" fill="#555">Couches en Lecture Seule (Image)</text>
+                                <rect x="8" y="63" width="18" height="10" fill="#dbeafe" stroke="#60a5fa" stroke-width="1"/>
+
+                                <!-- Flèche vers le haut -->
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                                    </marker>
+                                </defs>
+                                <path d="M200 60 V 40" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                                <text x="210" y="53" font-family="Inter, sans-serif" font-size="12" fill="#333">Ajouté par Docker</text>
+
+                                <!-- Couche Conteneur (inscriptible) -->
+                                <g>
+                                    <rect x="50" y="70" width="300" height="30" fill="#c4f1c4" stroke="#4a9b4a" stroke-width="2"/>
+                                    <text x="200" y="90" font-family="Inter, sans-serif" font-size="14" text-anchor="middle">Conteneur (Couche Inscriptible)</text>
+                                </g>
+                                
+                                <!-- Couches Image (lecture seule) -->
+                                <g>
+                                    <rect x="50" y="100" width="300" height="30" fill="#dbeafe" stroke="#60a5fa" stroke-width="2" stroke-dasharray="4"/>
+                                    <text x="200" y="120" font-family="Inter, sans-serif" font-size="14" text-anchor="middle">Image - Couche 3 (ex: PHP)</text>
+                                </g>
+                                <g>
+                                    <rect x="50" y="130" width="300" height="30" fill="#dbeafe" stroke="#60a5fa" stroke-width="2" stroke-dasharray="4"/>
+                                    <text x="200" y="150" font-family="Inter, sans-serif" font-size="14" text-anchor="middle">Image - Couche 2 (ex: Apache)</text>
+                                </g>
+                                <g>
+                                    <rect x="50" y="160" width="300" height="30" fill="#dbeafe" stroke="#60a5fa" stroke-width="2" stroke-dasharray="4"/>
+                                    <text x="200" y="180" font-family="Inter, sans-serif" font-size="14" text-anchor="middle">Image - Couche 1 (OS de base)</text>
+                                </g>
+                            </svg>
+                            <p class="text-sm text-gray-600 italic mt-2">Schéma illustrant la superposition de la couche inscriptible du conteneur sur les couches en lecture seule de l'image.</p>
+                        </div>
+                        
+                        <ul class="list-disc list-inside text-gray-700 space-y-2 mt-4">
+                            <li><b>Efficacité :</b> Les couches sont partagées. Si 10 conteneurs utilisent la même image de base, ils partagent ces couches en lecture seule.</li>
+                            <li><b>Copy-on-Write (CoW) :</b> Lorsqu'un conteneur est lancé, Docker ajoute une fine **couche inscriptible** sur le dessus. Les modifications faites dans le conteneur sont écrites dans cette couche, sans altérer l'image de base.</li>
+                        </ul>
+
+                        <!-- Ajout de l'exemple Flutter -->
+                        <div class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
+                            <p class="font-semibold text-yellow-800">Exemple Concret : Image Simple vs Image Complexe</p>
+                            <p class="text-sm text-yellow-700 mt-1">Une image simple comme <code>nginx:alpine</code> a très peu de couches. En revanche, une image de développement comme <code>cirrusci/flutter</code> (utilisée pour le développement Flutter) peut contenir des dizaines de couches : une pour l'OS, une pour le SDK, une pour les dépendances... C'est là que l'efficacité du partage de couches prend tout son sens !</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Commandes de Manipulation -->
+            <section id="pratique">
+                <h2 class="text-2xl font-semibold mb-4 text-blue-700">💻 2. Commandes de Manipulation</h2>
+
+                <!-- Helper pour bloc de code (caché) -->
+                <div id="code-block-template" class="hidden">
+                    <div class="relative bg-gray-900 text-white p-4 rounded-lg my-2 font-mono text-sm">
+                        <button class="copy-btn absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-sans px-2 py-1 rounded">
+                            Copier
+                        </button>
+                        <pre><code class="code-content block whitespace-pre-wrap"></code></pre>
+                    </div>
+                </div>
+
+                <!-- Item 1: Informations Générales -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <button class="accordion-toggle w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-700">A. Obtenir des Informations</span>
+                        <svg class="accordion-icon w-6 h-6 text-gray-500 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="content-panel p-6 border-t">
+                        <p class="mb-2">Afficher la liste de toutes les commandes Docker :</p>
+                        <div class="code-wrapper" data-code="docker help"></div>
+                        
+                        <p class="mt-4 mb-2">Afficher la version de Docker :</p>
+                        <div class="code-wrapper" data-code="docker --version"></div>
+
+                        <p class="mt-4 mb-2">Afficher des informations détaillées sur l'installation Docker (nombre d'images, de conteneurs, etc.) :</p>
+                        <div class="code-wrapper" data-code="docker info"></div>
+                    </div>
+                </div>
+                
+                <!-- Item 2: Rechercher et Télécharger -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <button class="accordion-toggle w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-700">B. Rechercher et Télécharger des Images</span>
+                        <svg class="accordion-icon w-6 h-6 text-gray-500 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="content-panel p-6 border-t">
+                        <p class="mb-2">Rechercher une image sur le Docker Hub (le registre officiel) :</p>
+                        <div class="code-wrapper" data-code="docker search ubuntu"></div>
+
+                        <p class="mt-4 mb-2">Filtrer la recherche pour n'afficher que les images officielles :</p>
+                        <div class="code-wrapper" data-code="docker search --filter &quot;is-official=true&quot; ubuntu"></div>
+                        
+                        <p class="mt-4 mb-2">Télécharger une image (par défaut, le tag <code>latest</code>) :</p>
+                        <div class="code-wrapper" data-code="docker pull ubuntu"></div>
+
+                        <p class="mt-4 mb-2">Télécharger une image avec un tag (version) spécifique :</p>
+                        <div class="code-wrapper" data-code="docker pull ubuntu:16.04"></div>
+                    </div>
+                </div>
+
+                <!-- Item 3: Lister les Images -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <button class="accordion-toggle w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-700">C. Lister les Images Locales</span>
+                        <svg class="accordion-icon w-6 h-6 text-gray-500 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="content-panel p-6 border-t">
+                        <p class="mb-2">Lister toutes les images téléchargées sur votre machine :</p>
+                        <div class="code-wrapper" data-code="docker images"></div>
+                        <p class="text-sm text-gray-600 italic mt-1">(Alias : <code>docker image ls</code>)</p>
+
+                        <p class="mt-4 mb-2">L'output de cette commande contient :</p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li><b>REPOSITORY :</b> Le nom de l'image.</li>
+                            <li><b>TAG :</b> La version de l'image (<code>latest</code> par défaut).</li>
+                            <li><b>IMAGE ID :</b> L'identifiant unique de l'image.</li>
+                            <li><b>CREATED :</b> La date de création de l'image.</li>
+                            <li><b>SIZE :</b> La taille de l'image.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Item 4: Supprimer des Images -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <button class="accordion-toggle w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-700">D. Supprimer une Image</span>
+                        <svg class="accordion-icon w-6 h-6 text-gray-500 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="content-panel p-6 border-t">
+                        <p class="mb-2">Supprimer une image par son nom ou son ID :</p>
+                        <div class="code-wrapper" data-code="docker rmi hello-world"></div>
+                        <p class="text-sm text-gray-600 italic mt-1">(Alias : <code>docker image rm hello-world</code>)</p>
+
+                        <p class="mt-4 mb-2"><strong>Erreur fréquente :</strong> Si un conteneur (même arrêté) utilise cette image, vous aurez une erreur.</p>
+                        <p class="mb-2">Pour forcer la suppression (supprime aussi les conteneurs liés), utilisez <code>-f</code> ou <code>--force</code> :</p>
+                        <div class="code-wrapper" data-code="docker rmi -f hello-world"></div>
+                        
+                        <p class="mt-4 mb-2"><strong>Commande bonus :</strong> Supprimer toutes les images sur votre machine :</p>
+                        <div class="code-wrapper" data-code="docker rmi -f $(docker images -q)"></div>
+                        <p class="text-sm text-gray-600 italic mt-1">(<code>docker images -q</code> ne liste que les ID d'images, qui sont passés à <code>docker rmi -f</code>).</p>
+                    </div>
+                </div>
+
+                <!-- NOUVEL ITEM: E. Inspecter les Couches (History) -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <button class="accordion-toggle w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-700">E. Inspecter les Couches (History)</span>
+                        <svg class="accordion-icon w-6 h-6 text-gray-500 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="content-panel p-6 border-t">
+                        <p class="mb-2">Pour voir les différentes couches qui composent une image (et les commandes qui les ont créées), utilisez <code>docker history</code> :</p>
+                        <div class="code-wrapper" data-code="docker history [NOM_IMAGE]:[TAG]"></div>
+                        <p class="text-sm text-gray-600 italic mt-1">C'est très utile pour comprendre comment une image est construite et pour voir l'intérêt du système de couches (ex: <code>docker history cirrusci/flutter:latest</code>).</p>
+                    </div>
+                </div>
+
+            </section>
+            
+            <!-- Section 3: Aide-Mémoire -->
+            <section id="cheatsheet" class="mt-10 p-6 bg-blue-50 rounded-xl border border-blue-200">
+                <h2 class="text-2xl font-semibold mb-4 text-blue-700">📌 3. Aide-Mémoire des Commandes</h2>
+                
+                <div class="mb-4">
+                    <p class="font-semibold text-gray-700">Afficher de l'aide :</p>
+                    <div class="code-wrapper" data-code="docker help"></div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="font-semibold text-gray-700">Afficher des informations système :</p>
+                    <div class="code-wrapper" data-code="docker info"></div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="font-semibold text-gray-700">Rechercher une image :</p>
+                    <div class="code-wrapper" data-code="docker search [NOM]"></div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="font-semibold text-gray-700">Télécharger une image :</p>
+                    <div class="code-wrapper" data-code="docker pull [NOM]:[TAG]"></div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="font-semibold text-gray-700">Lister les images locales :</p>
+                    <div class="code-wrapper" data-code="docker images"></div>
+                </div>
+                
+                <!-- Ajout de 'docker history' -->
+                <div class="mb-4">
+                    <p class="font-semibold text-gray-700">Voir les couches d'une image :</p>
+                    <div class="code-wrapper" data-code="docker history [IMAGE_ID ou NOM]"></div>
+                </div>
+
+                <div class="mb-4">
+                    <p class="font-semibold text-gray-700">Supprimer une image :</p>
+                    <div class="code-wrapper" data-code="docker rmi [IMAGE_ID ou NOM]"></div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="font-semibold text-gray-700">Forcer la suppression d'une image :</p>
+                    <div class="code-wrapper" data-code="docker rmi -f [IMAGE_ID ou NOM]"></div>
+                </div>
+                
+            </section>
+
+            <!-- NOUVELLE SECTION: TP (Travaux Pratiques) -->
+            <section id="tp" class="mt-10">
+                <h2 class="text-2xl font-semibold mb-4 text-green-700">🧑‍💻 4. TP (Exercices Pratiques)</h2>
+                <div class="bg-gray-50 p-6 rounded-lg border space-y-6">
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Exercice 1 : Exploration du Docker Hub</h3>
+                        <ol class="list-decimal list-inside text-gray-700 mt-2 space-y-2">
+                            <li>Recherchez une image pour le serveur web <code>nginx</code> sur le Docker Hub.</li>
+                            <li>Filtrez les résultats pour ne voir que l'image officielle.</li>
+                            <li>Téléchargez (<code>pull</code>) la version <code>stable-alpine</code> de l'image officielle <code>nginx</code>. (<code>alpine</code> signifie qu'il s'agit d'une version très légère).</li>
+                            <li>Listez vos images locales pour vérifier que <code>nginx</code> avec le tag <code>stable-alpine</code> est bien présente.</li>
+                        </ol>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Exercice 2 : Téléchargement et Nettoyage</h3>
+                        <ol class="list-decimal list-inside text-gray-700 mt-2 space-y-2">
+                            <li>Téléchargez l'image <code>httpd</code> (le serveur Apache) avec son tag <code>latest</code>.</li>
+                            <li>Téléchargez l'image <code>redis</code> avec le tag <code>latest</code>.</li>
+                            <li>Listez toutes vos images. Notez leurs tailles.</li>
+                            <li>Supprimez (<code>rmi</code>) l'image <code>httpd</code>.</li>
+                            <li>Essayez de supprimer l'image <code>redis</code>.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Ajout Exercice 3 -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Exercice 3 : Analyse d'une image complexe (Flutter)</h3>
+                        <ol class="list-decimal list-inside text-gray-700 mt-2 space-y-2">
+                            <li>Recherchez des images pour <code>flutter</code>. L'image <code>cirrusci/flutter</code> est une image populaire pour la CI/CD.</li>
+                            <li>Téléchargez l'image <code>cirrusci/flutter:latest</code>. (Attention : elle est assez volumineuse !)</li>
+                            <li>Utilisez la commande <code>docker history cirrusci/flutter:latest</code> pour voir la liste des couches. Combien y en a-t-il ?</li>
+                            <li>Comparez le nombre de couches et la taille de <code>cirrusci/flutter</code> avec l'image <code>nginx:stable-alpine</code> de l'exercice 1. Cela illustre bien la différence entre une image applicative légère et une image de développement complète.</li>
+                        </ol>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Exercice 4 (Bonus) : Nettoyage Complet</h3>
+                        <p class="text-gray-700 mt-2">En utilisant la commande "bonus" vue plus haut, supprimez <strong>toutes</strong> les images de votre machine en une seule commande. (Attention : à n'utiliser que si vous êtes sûr de ne plus avoir besoin des images !)</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- NOUVELLE SECTION: Questionnaire -->
+            <section id="questionnaire" class="mt-10">
+                <h2 class="text-2xl font-semibold mb-4 text-purple-700">🧠 5. Questionnaire de Révision</h2>
+                
+                <div class="bg-purple-50 p-6 rounded-lg border border-purple-200">
+                    <form id="quiz-form" class="space-y-6">
+
+                        <!-- Question 1 -->
+                        <div class="q-group" data-correct="b">
+                            <p class="text-lg font-semibold text-gray-800">1. Quelle est la principale différence entre une image et un conteneur ?</p>
+                            <div class="space-y-2 mt-2">
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q1" value="a" class="mr-3">
+                                    <span>Une image est un conteneur en cours d'exécution.</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q1" value="b" class="mr-3">
+                                    <span>Une image est un modèle (plan), un conteneur est une instance (maison).</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q1" value="c" class="mr-3">
+                                    <span>Il n'y a pas de différence, ce sont des synonymes.</span>
+                                </label>
+                            </div>
+                            <p class="quiz-feedback text-sm mt-2 hidden"></p>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="q-group" data-correct="c">
+                            <p class="text-lg font-semibold text-gray-800">2. Quelle commande utilisez-vous pour télécharger une image depuis le Docker Hub ?</p>
+                            <div class="space-y-2 mt-2">
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q2" value="a" class="mr-3">
+                                    <span>docker rmi</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q2" value="b" class="mr-3">
+                                    <span>docker search</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q2" value="c" class="mr-3">
+                                    <span>docker pull</span>
+                                </label>
+                            </div>
+                            <p class="quiz-feedback text-sm mt-2 hidden"></p>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="q-group" data-correct="a">
+                            <p class="text-lg font-semibold text-gray-800">3. Que fait le système de "Copy-on-Write" (CoW) ?</p>
+                            <div class="space-y-2 mt-2">
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q3" value="a" class="mr-3">
+                                    <span>Il crée une couche inscriptible sur le conteneur pour ne pas modifier l'image de base.</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q3" value="b" class="mr-3">
+                                    <span>Il copie l'image entière à chaque fois qu'on lance un conteneur.</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q3" value="c" class="mr-3">
+                                    <span>Il supprime automatiquement les anciennes images.</span>
+                                </label>
+                            </div>
+                            <p class="quiz-feedback text-sm mt-2 hidden"></p>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="q-group" data-correct="b">
+                            <p class="text-lg font-semibold text-gray-800">4. Que se passe-t-il si vous essayez de faire <code>docker rmi mon-image</code> alors qu'un conteneur (même arrêté) l'utilise ?</p>
+                            <div class="space-y-2 mt-2">
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q4" value="a" class="mr-3">
+                                    <span>L'image est supprimée, et le conteneur est automatiquement supprimé aussi.</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q4" value="b" class="mr-3">
+                                    <span>Docker affiche une erreur et empêche la suppression.</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50">
+                                    <input type="radio" name="q4" value="c" class="mr-3">
+                                    <span>Docker vous demande une confirmation avant de forcer la suppression.</span>
+                                </label>
+                            </div>
+                            <p class="quiz-feedback text-sm mt-2 hidden"></p>
+                        </div>
+
+                    </form>
+
+                    <button id="check-quiz" class="mt-6 w-full bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
+                        Vérifier mes réponses
+                    </button>
+                    <div id="quiz-result" class="mt-4 text-lg font-semibold text-center hidden"></div>
+                </div>
+            </section>
+
+
+        </main>
+    </div>
+
+    <!-- Script JavaScript pour l'interactivité -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- 1. Logique de l'Accordéon ---
+            const accordions = document.querySelectorAll('.accordion-toggle');
+            accordions.forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('.accordion-icon');
+                    
+                    content.classList.toggle('open');
+                    icon.classList.toggle('rotate-180');
+                });
+            });
+
+            // --- 2. Logique des Blocs de Code (Copier) ---
+            
+            // Fonction de copie (robuste pour les iframes)
+            function copyToClipboard(text, btn) {
+                const el = document.createElement('textarea');
+                el.value = text;
+                el.setAttribute('readonly', '');
+                el.style.position = 'absolute';
+                el.style.left = '-9999px';
+                document.body.appendChild(el);
+                
+                const originalText = btn.innerText;
+                
+                el.select();
+                try {
+                    document.execCommand('copy');
+                    btn.innerText = 'Copié !';
+                } catch (err) {
+                    console.error('Impossible de copier', err);
+                    btn.innerText = 'Erreur';
+                }
+                
+                document.body.removeChild(el);
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                }, 2000);
+            }
+
+            // Générer les blocs de code à partir du template
+            const codeTemplate = document.getElementById('code-block-template');
+            if (codeTemplate) {
+                const codeWrappers = document.querySelectorAll('.code-wrapper');
+
+                codeWrappers.forEach(wrapper => {
+                    const codeText = wrapper.getAttribute('data-code');
+                    // Cloner le template
+                    const newCodeBlock = codeTemplate.cloneNode(true);
+                    
+                    newCodeBlock.classList.remove('hidden');
+                    newCodeBlock.removeAttribute('id');
+                    
+                    // Insérer le code
+                    const codeElement = newCodeBlock.querySelector('.code-content');
+                    if (codeElement) {
+                        codeElement.innerText = codeText;
+                    }
+                    
+                    // Attacher l'événement de copie
+                    const copyButton = newCodeBlock.querySelector('.copy-btn');
+                    if (copyButton) {
+                        copyButton.addEventListener('click', () => {
+                            copyToClipboard(codeText, copyButton);
+                        });
+                    }
+                    
+                    // Remplacer le div .code-wrapper par le bloc de code
+                    wrapper.replaceWith(newCodeBlock);
+                });
+                
+                // Supprimer le template après utilisation
+                codeTemplate.remove();
+            }
+
+            // --- 3. Logique du Questionnaire ---
+            const quizForm = document.getElementById('quiz-form');
+            const checkButton = document.getElementById('check-quiz');
+            const quizResult = document.getElementById('quiz-result');
+
+            if (checkButton) {
+                checkButton.addEventListener('click', () => {
+                    let score = 0;
+                    const totalQuestions = 4;
+                    const questionGroups = quizForm.querySelectorAll('.q-group');
+
+                    questionGroups.forEach((group, index) => {
+                        const correctAnswer = group.getAttribute('data-correct');
+                        const selected = group.querySelector(`input[name="q${index + 1}"]:checked`);
+                        const feedback = group.querySelector('.quiz-feedback');
+                        
+                        feedback.classList.remove('hidden', 'text-green-600', 'text-red-600');
+
+                        if (selected) {
+                            if (selected.value === correctAnswer) {
+                                score++;
+                                feedback.innerText = "Correct !";
+                                feedback.classList.add('text-green-600');
+                            } else {
+                                feedback.innerText = "Incorrect. La bonne réponse était " + correctAnswer.toUpperCase() + ".";
+                                feedback.classList.add('text-red-600');
+                            }
+                        } else {
+                            feedback.innerText = "Vous n'avez pas répondu à cette question.";
+                            feedback.classList.add('text-red-600');
+                        }
+                    });
+
+                    quizResult.classList.remove('hidden');
+                    quizResult.innerText = `Votre score : ${score} / ${totalQuestions}`;
+                    
+                    if (score === totalQuestions) {
+                        quizResult.classList.add('text-green-600');
+                        quizResult.classList.remove('text-red-600');
+                    } else {
+                        quizResult.classList.add('text-red-600');
+                        quizResult.classList.remove('text-green-600');
+                    }
+                });
+            }
+
+        });
+    </script>
+
+</body>
+</html>

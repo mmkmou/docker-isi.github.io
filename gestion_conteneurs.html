@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours Interactif : Conteneurs Docker</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importation de la police Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Définition de la police par défaut */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style pour l'onglet actif */
+        .tab-button.active {
+            border-color: #2563eb; /* blue-600 */
+            color: #2563eb; /* blue-600 */
+            font-weight: 600;
+        }
+        /* Cacher les panneaux d'onglets inactifs */
+        .tab-pane {
+            display: none;
+        }
+        /* Afficher le panneau d'onglet actif */
+        .tab-pane.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container max-w-5xl mx-auto p-4 sm:p-8">
+        <div class="bg-white rounded-lg shadow-2xl overflow-hidden">
+            <header class="p-6 sm:p-8 bg-blue-700 text-white">
+                <h1 class="text-3xl sm:text-4xl font-bold">Fonctionnement et Manipulation des Conteneurs Docker</h1>
+                <p class="mt-2 text-lg text-blue-100">Un guide interactif pour réviser les concepts clés.</p>
+            </header>
+
+            <!-- Boutons d'accès (Onglets) -->
+            <nav class="flex flex-wrap justify-center border-b-2 border-gray-200 bg-gray-50 p-2 sm:p-4">
+                <button class="tab-button active py-3 px-4 sm:px-6 text-sm sm:text-base font-medium text-gray-600 border-b-4 border-transparent hover:text-blue-600 transition-colors duration-200" onclick="showTab(event, 'tab1')">
+                    1. Image vs Conteneur
+                </button>
+                <button class="tab-button py-3 px-4 sm:px-6 text-sm sm:text-base font-medium text-gray-600 border-b-4 border-transparent hover:text-blue-600 transition-colors duration-200" onclick="showTab(event, 'tab2')">
+                    2. Création & Lancement
+                </button>
+                <button class="tab-button py-3 px-4 sm:px-6 text-sm sm:text-base font-medium text-gray-600 border-b-4 border-transparent hover:text-blue-600 transition-colors duration-200" onclick="showTab(event, 'tab3')">
+                    3. Cycle de Vie
+                </button>
+                <button class="tab-button py-3 px-4 sm:px-6 text-sm sm:text-base font-medium text-gray-600 border-b-4 border-transparent hover:text-blue-600 transition-colors duration-200" onclick="showTab(event, 'tab4')">
+                    4. Interagir
+                </button>
+                <button class="tab-button py-3 px-4 sm:px-6 text-sm sm:text-base font-medium text-gray-600 border-b-4 border-transparent hover:text-blue-600 transition-colors duration-200" onclick="showTab(event, 'tab5')">
+                    5. Commit
+                </button>
+            </nav>
+
+            <!-- Contenu des Onglets -->
+            <div class="p-6 sm:p-8">
+
+                <!-- Panneau 1: Image vs Conteneur -->
+                <div id="tab1" class="tab-pane active">
+                    <!-- Bloc Théorie -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-4">1. Différence Image vs Conteneur</h2>
+                        <div class="prose max-w-none">
+                            <ul class="list-disc list-outside space-y-2 pl-5">
+                                <li>Une <strong>image</strong> est un modèle statique, un "snapshot" en lecture seule contenant une application et ses dépendances.</li>
+                                <li>Un <strong>conteneur</strong> est une instance en cours d'exécution d'une image. C'est l'image qui prend vie en mémoire, avec un état et un processus utilisateur.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Bloc TP -->
+                    <div class="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h3 class="text-xl font-semibold text-green-800 mb-3">💡 Travaux Pratiques (TP)</h3>
+                        <p class="mb-2">Lister les images présentes sur votre machine et voir la différence avec les conteneurs en cours.</p>
+                        <code class="block bg-gray-800 text-white p-3 rounded-md text-sm"># 1. Voir les images que vous avez localement
+docker images
+
+# 2. Voir les conteneurs en cours d'exécution
+docker ps
+
+# 3. Voir tous les conteneurs (même arrêtés)
+docker ps -a</code>
+                    </div>
+
+                    <!-- Bloc Questionnaire -->
+                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <h3 class="text-xl font-semibold text-purple-800 mb-3">❓ Questionnaire</h3>
+                        <p class="font-medium">Un conteneur est-il modifiable, et une image l'est-elle ?</p>
+                        <p class="mt-2 text-sm text-gray-700"><strong>Réponse :</strong> Un conteneur est modifiable (son état change), mais une image est immuable (en lecture seule). Si vous modifiez un conteneur, les changements n'affectent pas l'image d'origine.</p>
+                    </div>
+                </div>
+
+                <!-- Panneau 2: Création et Lancement -->
+                <div id="tab2" class="tab-pane">
+                    <!-- Bloc Théorie -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-4">2. Création et Lancement de Conteneurs</h2>
+                        <p class="mb-3">La commande de base est <code>docker run</code>.</p>
+                        <h4 class="font-semibold mb-2">Options Clés :</h4>
+                        <ul class="list-disc list-outside space-y-2 pl-5">
+                            <li><code>-i</code> (interactif) : Garde l'entrée standard (clavier) ouverte.</li>
+                            <li><code>-t</code> (TTY) : Alloue un terminal virtuel (pseudo-TTY). (Souvent utilisé ensemble : <code>-it</code>).</li>
+                            <li><code>-d</code> (detached) : Exécute le conteneur en arrière-plan.</li>
+                            <li><code>--name &lt;NOM&gt;</code> : Attribue un nom spécifique au conteneur.</li>
+                            <li><code>-p &lt;PORT_HOTE&gt;:&lt;PORT_CONTENEUR&gt;</code> : Mappe un port de l'hôte vers le conteneur.</li>
+                        </ul>
+                        <h4 class="font-semibold mt-4 mb-2">Nature Éphémère :</h4>
+                        <p>Les modifications dans un conteneur sont perdues s'il est supprimé. Pour la persistance, on utilise des <strong>volumes</strong>.</p>
+                    </div>
+
+                    <!-- Bloc TP -->
+                    <div class="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h3 class="text-xl font-semibold text-green-800 mb-3">💡 Travaux Pratiques (TP)</h3>
+                        <p class="mb-2">Lancez un serveur web Nginx en arrière-plan et accédez-y depuis votre navigateur.</p>
+                        <code class="block bg-gray-800 text-white p-3 rounded-md text-sm"># 1. Lance le conteneur "mon-nginx" en mode détaché (-d)
+# et mappe le port 8080 de votre machine au port 80 du conteneur
+docker run -d --name mon-nginx -p 8080:80 nginx:latest
+
+# 2. Ouvrez http://localhost:8080 dans votre navigateur.
+# 3. Arrêtez et supprimez le conteneur
+docker stop mon-nginx
+docker rm mon-nginx</code>
+                    </div>
+
+                    <!-- Bloc Questionnaire -->
+                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <h3 class="text-xl font-semibold text-purple-800 mb-3">❓ Questionnaire</h3>
+                        <p class="font-medium">Que fait la commande <code>docker run -it ubuntu bash</code> ?</p>
+                        <p class="mt-2 text-sm text-gray-700"><strong>Réponse :</strong> Elle crée et démarre un conteneur à partir de l'image <code>ubuntu</code>, vous attache à un terminal interactif (<code>-it</code>) et exécute la commande <code>bash</code>, vous donnant un shell à l'intérieur du conteneur.</p>
+                    </div>
+                </div>
+                
+                <!-- Panneau 3: Cycle de Vie -->
+                <div id="tab3" class="tab-pane">
+                    <!-- Bloc Théorie -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-4">3. Gestion du Cycle de Vie</h2>
+                        <h4 class="font-semibold mb-2">Lister les Conteneurs :</h4>
+                        <ul class="list-disc list-outside space-y-2 pl-5">
+                            <li><code>docker ps</code> : Affiche les conteneurs <strong>en cours d'exécution</strong>.</li>
+                            <li><code>docker ps -a</code> : Affiche <strong>tous</strong> les conteneurs (même arrêtés).</li>
+                        </ul>
+                        <h4 class="font-semibold mt-4 mb-2">Démarrer / Arrêter :</h4>
+                         <ul class="list-disc list-outside space-y-2 pl-5">
+                            <li><code>docker start &lt;NOM_OU_ID&gt;</code> : Démarre un conteneur arrêté.</li>
+                            <li><code>docker stop &lt;NOM_OU_ID&gt;</code> : Arrête un conteneur en cours.</li>
+                        </ul>
+                        <h4 class="font-semibold mt-4 mb-2">Supprimer un Conteneur :</h4>
+                        <ul class="list-disc list-outside space-y-2 pl-5">
+                            <li><code>docker rm &lt;NOM_OU_ID&gt;</code> : Supprime un conteneur <strong>arrêté</strong>.</li>
+                            <li><code>docker rm -f &lt;NOM_OU_ID&gt;</code> : Force la suppression (même s'il est en cours).</li>
+                        </ul>
+                    </div>
+
+                    <!-- Bloc TP -->
+                    <div class="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h3 class="text-xl font-semibold text-green-800 mb-3">💡 Travaux Pratiques (TP)</h3>
+                        <p class="mb-2">Gérer le cycle de vie d'un conteneur <code>hello-world</code>.</p>
+                        <code class="block bg-gray-800 text-white p-3 rounded-md text-sm"># 1. Créez un conteneur (il s'exécute et s'arrête)
+docker run --name test-hello hello-world
+
+# 2. Voyez-le dans la liste des conteneurs arrêtés
+docker ps -a
+
+# 3. Redémarrez-le
+docker start test-hello
+
+# 4. Supprimez-le
+docker rm test-hello</code>
+                    </div>
+
+                    <!-- Bloc Questionnaire -->
+                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <h3 class="text-xl font-semibold text-purple-800 mb-3">❓ Questionnaire</h3>
+                        <p class="font-medium">Quelle est la différence entre <code>docker stop</code> et <code>docker rm</code> ?</p>
+                        <p class="mt-2 text-sm text-gray-700"><strong>Réponse :</strong> <code>docker stop</code> arrête le conteneur (il existe toujours mais ne tourne pas). <code>docker rm</code> supprime le conteneur (il doit être arrêté avant d'être supprimé).</p>
+                    </div>
+                </div>
+
+                <!-- Panneau 4: Interagir -->
+                <div id="tab4" class="tab-pane">
+                    <!-- Bloc Théorie -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-4">4. Interagir avec les Conteneurs en Cours</h2>
+                        <h4 class="font-semibold mb-2">Exécuter une Commande :</h4>
+                        <ul class="list-disc list-outside space-y-2 pl-5">
+                            <li><code>docker exec &lt;NOM_OU_ID&gt; &lt;COMMANDE&gt;</code> : Exécute une commande dans un conteneur <strong>déjà en cours</strong>.</li>
+                            <li><strong>Exemple :</strong> <code>docker exec -it mon-nginx bash</code> ouvre un shell dans le conteneur "mon-nginx".</li>
+                            <li><strong>Quitter un shell `exec` :</strong> Tapez <code>exit</code> ou <code>Ctrl + D</code>. (Pour se détacher sans quitter : <code>Ctrl + P</code> puis <code>Ctrl + Q</code>).</li>
+                        </ul>
+                        <h4 class="font-semibold mt-4 mb-2">Consulter les Logs :</h4>
+                        <ul class="list-disc list-outside space-y-2 pl-5">
+                            <li><code>docker logs &lt;NOM_OU_ID&gt;</code> : Affiche les logs (sortie standard) du conteneur.</li>
+                            <li><code>docker logs -f &lt;NOM_OU_ID&gt;</code> : Suit les logs en temps réel.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Bloc TP -->
+                    <div class="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h3 class="text-xl font-semibold text-green-800 mb-3">💡 Travaux Pratiques (TP)</h3>
+                        <p class="mb-2">Lancez un conteneur Nginx et utilisez <code>exec</code> pour voir le contenu du fichier <code>index.html</code> par défaut.</p>
+                        <code class="block bg-gray-800 text-white p-3 rounded-md text-sm"># 1. Lancez un Nginx (s'il n'est pas déjà lancé)
+docker run -d --name mon-nginx -p 8080:80 nginx
+
+# 2. Exécutez 'cat' dans le conteneur pour lire le fichier
+docker exec mon-nginx cat /usr/share/nginx/html/index.html
+
+# 3. (Nettoyage)
+docker stop mon-nginx && docker rm mon-nginx</code>
+                    </div>
+
+                    <!-- Bloc Questionnaire -->
+                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <h3 class="text-xl font-semibold text-purple-800 mb-3">❓ Questionnaire</h3>
+                        <p class="font-medium">Quelle est la différence principale entre <code>docker run</code> et <code>docker exec</code> ?</p>
+                        <p class="mt-2 text-sm text-gray-700"><strong>Réponse :</strong> <code>docker run</code> crée un *nouveau* conteneur à partir d'une image. <code>docker exec</code> exécute une commande à l'intérieur d'un conteneur *existant* et déjà en cours d'exécution.</p>
+                    </div>
+                </div>
+
+                <!-- Panneau 5: Commit -->
+                <div id="tab5" class="tab-pane">
+                    <!-- Bloc Théorie -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-4">5. Transformer un Conteneur en Image (Commit)</h2>
+                        <ul class="list-disc list-outside space-y-2 pl-5">
+                            <li>Si des modifications ont été faites dans un conteneur (ex: installation d'outils), on peut sauvegarder cet état comme une nouvelle image.</li>
+                            <li><strong>Commande :</strong> <code>docker commit &lt;NOM_CONTENEUR&gt; &lt;NOM_NOUVELLE_IMAGE&gt;</code></li>
+                            <li><strong class="text-red-600">Attention :</strong> Cette méthode n'est pas recommandée pour la persistance des données (on préfère les volumes) ou pour créer des images (on préfère un <code>Dockerfile</code>). C'est utile pour du débogage ou des sauvegardes rapides.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Bloc TP -->
+                    <div class="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h3 class="text-xl font-semibold text-green-800 mb-3">💡 Travaux Pratiques (TP)</h3>
+                        <p class="mb-2">Installez l'outil <code>curl</code> dans un conteneur <code>ubuntu</code> et "committez" le changement dans une nouvelle image.</p>
+                        <code class="block bg-gray-800 text-white p-3 rounded-md text-sm"># 1. Lancez un conteneur ubuntu interactif
+docker run -it --name ubuntu-modifie ubuntu:latest bash
+
+# 2. (Dans le conteneur) Installez curl
+# apt-get update && apt-get install -y curl
+# exit
+
+# 3. (Sur l'hôte) Créez une image à partir du conteneur modifié
+docker commit ubuntu-modifie mon-ubuntu-avec-curl
+
+# 4. Vérifiez que la nouvelle image existe
+docker images | grep mon-ubuntu-avec-curl</code>
+                    </div>
+
+                    <!-- Bloc Questionnaire -->
+                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <h3 class="text-xl font-semibold text-purple-800 mb-3">❓ Questionnaire</h3>
+                        <p class="font-medium">Quelle est la méthode recommandée pour créer des images personnalisées (plutôt que <code>docker commit</code>) ?</p>
+                        <p class="mt-2 text-sm text-gray-700"><strong>Réponse :</strong> Utiliser un <code>Dockerfile</code>. Un Dockerfile est un fichier texte qui contient les instructions pour assembler une image de manière reproductible et automatisée.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript pour les onglets -->
+    <script>
+        function showTab(event, tabId) {
+            // Cacher tous les panneaux
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            tabPanes.forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // Désactiver tous les boutons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Afficher le panneau cible
+            document.getElementById(tabId).classList.add('active');
+
+            // Activer le bouton cible
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+
+</body>
+</html>

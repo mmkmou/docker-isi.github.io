@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker - Semaine 1 : Fondamentaux</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Utilisation de la police Inter -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style pour les onglets actifs */
+        .tab-active {
+            border-bottom-color: #3b82f6; /* blue-500 */
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        /* Style pour le contenu des onglets */
+        .tab-content {
+            display: none;
+        }
+        .tab-content-active {
+            display: block;
+        }
+        /* Style pour les blocs de code */
+        pre {
+            background-color: #1f2937; /* gray-800 */
+            color: #d1d5db; /* gray-300 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #4b5563; /* gray-600 */
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #6b7280; /* gray-500 */
+        }
+        /* Styles pour le QCM */
+        .qcm-feedback {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .qcm-correct {
+            display: block;
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+            border: 1px solid #bbf7d0; /* green-200 */
+        }
+        .qcm-incorrect {
+            display: block;
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+            border: 1px solid #fecaca; /* red-200 */
+        }
+    </style>
+    <!-- Import de la police Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 ">
+        <!-- En-tête -->
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-600">Conteneurisation avec Docker</h1>
+            <p class="text-xl text-gray-600">Notes de Cours - Semaine 1</p>
+        </header>
+
+        <!-- Module de la Semaine 1 -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <a href="index.html" class="text-blue-500 hover:underline">&larr; Retour à l'accueil</a>
+            <br/>
+            <br/>
+            <h2 class="text-2xl font-bold mb-6">Semaine 1 : Les Fondamentaux de la Conteneurisation</h2>
+
+            <!-- Onglets de navigation -->
+            <div class="border-b border-gray-200 mb-6">
+                <nav class="flex space-x-4">
+                    
+                    <button id="tab-theorie" class="py-2 px-4 border-b-2 border-transparent tab-active" onclick="showTab('theorie')">
+                        Théorie (1h)
+                    </button>
+                    <button id="tab-pratique" class="py-2 px-4 border-b-2 border-transparent" onclick="showTab('pratique')">
+                        Pratique (2h)
+                    </button>
+                    <!-- Ajout de l'onglet QCM -->
+                    <button id="tab-qcm" class="py-2 px-4 border-b-2 border-transparent" onclick="showTab('qcm')">
+                        QCM
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Contenu des Onglets -->
+
+            <!-- == ONGLET THÉORIE == -->
+            <div id="content-theorie" class="tab-content tab-content-active space-y-6">
+                
+                <!-- Section Problématique -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">1. Problématique : L'enfer des dépendances</h3>
+                    <div class="bg-red-50 border border-red-200 p-4 rounded-lg">
+                        <p class="font-semibold text-red-700">Le problème classique : "Ça marche sur ma machine !"</p>
+                        <p class="mt-2 text-gray-700">
+                            Un développeur crée une application qui fonctionne parfaitement sur son ordinateur. Mais lorsque l'application est déployée en production ou partagée avec un collègue, elle plante.
+                        </p>
+                        <ul class="list-disc list-inside mt-2 text-gray-700 space-y-1">
+                            <li>Différences de versions de bibliothèques (dépendances).</li>
+                            <li>Variables d'environnement manquantes ou différentes.</li>
+                            <li>Configuration spécifique du système d'exploitation.</li>
+                            <li>Fichiers de configuration divergents.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section Concepts -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">2. Concepts : Virtualisation vs Conteneurisation</h3>
+                    <p class="mb-4">Les deux technologies visent à isoler les applications, mais elles le font différemment.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- VM -->
+                        <div class="bg-gray-50 p-4 rounded-lg border">
+                            <h4 class="font-bold text-lg mb-2">Machines Virtuelles (VMs)</h4>
+                            <p class="text-sm">Une VM émule un ordinateur complet (matériel inclus). Elle exécute un système d'exploitation invité (Guest OS) complet au-dessus d'un système d'exploitation hôte (Host OS) via un hyperviseur.</p>
+                            <ul class="list-disc list-inside text-sm mt-3 space-y-1">
+                                <li><strong>Avantage :</strong> Isolation totale et sécurité maximale.</li>
+                                <li><strong>Inconvénient :</strong> Lourd (Go), lent à démarrer, consomme beaucoup de ressources (RAM, CPU).</li>
+                            </ul>
+                        </div>
+                        <!-- Conteneurs -->
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h4 class="font-bold text-lg mb-2">Conteneurs (Docker)</h4>
+                            <p class="text-sm">Un conteneur partage le noyau (kernel) du système d'exploitation hôte. Il n'isole que l'application et ses dépendances (processus, système de fichiers, réseau) en utilisant les fonctionnalités du noyau Linux (cgroups, namespaces).</p>
+                             <ul class="list-disc list-inside text-sm mt-3 space-y-1">
+                                <li><strong>Avantage :</strong> Léger (Mo), démarrage instantané, efficace en ressources.</li>
+                                <li><strong>Inconvénient :</strong> Isolation moins forte que les VMs (noyau partagé).</li>
+                            </ul>
+                            <!-- Ajout de détails sur les namespaces et cgroups -->
+                            <div class="mt-4 bg-blue-50 p-3 rounded-md border border-blue-200">
+                                <h5 class="font-semibold text-sm text-blue-800">Comment ça marche ? (Points clés)</h5>
+                                <ul class="list-disc list-inside text-sm text-blue-700 mt-1">
+                                    <li><strong>Namespaces (Espaces de noms) :</strong> Fournissent l'isolation. Chaque conteneur a sa propre vue du système (ses propres processus (PID), son propre réseau (NET), ses propres points de montage (MNT), etc.).</li>
+                                    <li><strong>cgroups (Control Groups) :</strong> Limitent et contrôlent l'utilisation des ressources (CPU, RAM, I/O) pour chaque conteneur.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Remplacement du texte par un diagramme SVG -->
+                    <div class="my-6 p-4 bg-gray-50 rounded-lg border">
+                        <h4 class="font-semibold text-center mb-4">Comparaison : VM vs Conteneur</h4>
+                        <svg width="100%" height="250" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" class="text-sm" style="font-family: 'Inter', sans-serif;">
+                            <!-- VM Side -->
+                            <rect x="10" y="210" width="180" height="30" fill="#d1d5db"></rect>
+                            <text x="100" y="230" text-anchor="middle" font-weight="bold">Matériel</text>
+                            
+                            <rect x="10" y="170" width="180" height="30" fill="#6b7280"></rect>
+                            <text x="100" y="190" text-anchor="middle" fill="white">OS Hôte</text>
+                            
+                            <rect x="10" y="130" width="180" height="30" fill="#f59e0b"></rect>
+                            <text x="100" y="150" text-anchor="middle">Hyperviseur</text>
+                            
+                            <!-- VM 1 -->
+                            <rect x="20" y="90" width="70" height="30" fill="#9ca3af"></rect>
+                            <text x="55" y="110" text-anchor="middle">OS Invité</text>
+                            <rect x="20" y="50" width="70" height="30" fill="#dbeafe"></rect>
+                            <text x="55" y="70" text-anchor="middle">App A</text>
+                            
+                            <!-- VM 2 -->
+                            <rect x="110" y="90" width="70" height="30" fill="#9ca3af"></rect>
+                            <text x="145" y="110" text-anchor="middle">OS Invité</text>
+                            <rect x="110" y="50" width="70" height="30" fill="#dbeafe"></rect>
+                            <text x="145" y="70" text-anchor="middle">App B</text>
+                            
+                            <text x="100" y="25" text-anchor="middle" font-weight="bold" class="text-lg">Machines Virtuelles</text>
+
+                            <!-- Container Side -->
+                            <rect x="210" y="210" width="180" height="30" fill="#d1d5db"></rect>
+                            <text x="300" y="230" text-anchor="middle" font-weight="bold">Matériel</text>
+                            
+                            <rect x="210" y="170" width="180" height="30" fill="#6b7280"></rect>
+                            <text x="300" y="190" text-anchor="middle" fill="white">OS Hôte</text>
+                            
+                            <rect x="210" y="130" width="180" height="30" fill="#3b82f6"></rect>
+                            <text x="300" y="150" text-anchor="middle" fill="white">Docker Engine</text>
+                            
+                            <!-- Container 1 -->
+                            <rect x="220" y="50" width="70" height="70" fill="#dbeafe"></rect>
+                            <text x="255" y="85" text-anchor="middle">App A</text>
+                            
+                            <!-- Container 2 -->
+                            <rect x="310" y="50" width="70" height="70" fill="#dbeafe"></rect>
+                            <text x="345" y="85" text-anchor="middle">App B</text>
+                            
+                            <text x="300" y="25" text-anchor="middle" font-weight="bold" class="text-lg">Conteneurs</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Section Pourquoi les conteneurs -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">3. Pourquoi les conteneurs ?</h3>
+                    <ul class="list-none space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-3">✔</span>
+                            <div>
+                                <strong class="font-semibold">Portabilité :</strong> L'image du conteneur inclut TOUT ce dont l'application a besoin. Elle s'exécute de la même manière partout (dev, test, prod).
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-3">✔</span>
+                            <div>
+                                <strong class="font-semibold">Efficacité :</strong> Moins de surcharge que les VMs. Plus de conteneurs peuvent tourner sur un même hôte.
+                            </div>
+                        </li>
+                         <li class="flex items-start">
+                            <span class="text-green-500 mr-3">✔</span>
+                            <div>
+                                <strong class="font-semibold">Isolation :</strong> Les processus d'un conteneur sont isolés des autres conteneurs et de l'hôte.
+                            </div>
+                        </li>
+                         <li class="flex items-start">
+                            <span class="text-green-500 mr-3">✔</span>
+                            <div>
+                                <strong class="font-semibold">Reproductibilité :</strong> Les images sont construites à partir d'un fichier (Dockerfile) qui décrit les étapes. L'environnement est scripté et versionné.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Section Architecture Docker -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">4. Architecture Docker</h3>
+                    <p class="mb-4">Docker utilise une architecture client-serveur.</p>
+                    <!-- Remplacement du texte par un diagramme SVG -->
+                    <div class="my-6 p-4 bg-gray-50 rounded-lg border">
+                         <svg width="100%" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" class="text-sm" style="font-family: 'Inter', sans-serif;">
+                            <!-- Client -->
+                            <rect x="10" y="75" width="80" height="50" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"></rect>
+                            <text x="50" y="102.5" text-anchor="middle" font-weight="bold">Client</text>
+                            <text x="50" y="120" text-anchor="middle" class="text-xs">(docker cli)</text>
+                            
+                            <!-- Flèche Client -> Daemon -->
+                            <line x1="90" y1="100" x2="140" y2="100" stroke="#1f2937" stroke-width="2" marker-end="url(#arrow)"></line>
+                            <text x="115" y="95" text-anchor="middle" class="text-xs">API REST</text>
+                            
+                            <!-- Docker Daemon -->
+                            <rect x="140" y="50" width="120" height="100" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"></rect>
+                            <text x="200" y="70" text-anchor="middle" font-weight="bold">Docker Daemon</text>
+                            <text x="200" y="85" text-anchor="middle" class="text-xs">(dockerd)</text>
+                            <!-- Conteneurs/Images dans Daemon -->
+                            <rect x="150" y="100" width="50" height="40" fill="#c7d2fe"></rect>
+                            <text x="175" y="120" text-anchor="middle" class="text-xs">Images</text>
+                            <rect x="205" y="100" width="45" height="40" fill="#bbf7d0"></rect>
+                            <text x="227.5" y="120" text-anchor="middle" class="text-xs">Cont.</text>
+                            
+                            <!-- Flèche Daemon <-> Registre -->
+                            <line x1="260" y1="100" x2="310" y2="100" stroke="#1f2937" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"></line>
+                            <text x="285" y="95" text-anchor="middle" class="text-xs">pull/push</text>
+
+                            <!-- Registre -->
+                            <rect x="310" y="75" width="80" height="50" fill="#fee2e2" stroke="#ef4444" stroke-width="2"></rect>
+                            <text x="350" y="102.5" text-anchor="middle" font-weight="bold">Registre</text>
+                            <text x="350" y="120" text-anchor="middle" class="text-xs">(Docker Hub)</text>
+
+                            <!-- Définition de la flèche -->
+                            <defs>
+                                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"></path>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-gray-50 p-3 rounded-md">
+                            <strong>Client Docker (CLI) :</strong> L'outil en ligne de commande (`docker`) que vous utilisez. Il envoie des instructions au Daemon.
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-md">
+                            <strong>Daemon Docker (Docker Engine) :</strong> Le service (serveur) qui tourne en arrière-plan. Il écoute les requêtes de l'API Docker et gère les objets Docker (construire les images, démarrer les conteneurs, gérer le réseau...).
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-md">
+                            <strong>Registre (ex: Docker Hub) :</strong> Un service qui stocke et distribue les images Docker. C'est comme un "GitHub" pour les images Docker.
+                        </div>
+                    </div>
+                     <h4 class="font-semibold mt-6 mb-3">Les Objets Clés :</h4>
+                     <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 p-3 rounded-md border border-blue-200">
+                            <strong>Image :</strong> Un modèle (template) en lecture seule contenant un ensemble d'instructions pour créer un conteneur. C'est le "plan" de votre application (ex: une image Ubuntu avec Nginx installé).
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-md border border-green-200">
+                            <strong>Conteneur :</strong> Une instance exécutable d'une image. C'est le "bâtiment" construit à partir du plan. Vous pouvez démarrer, arrêter, et supprimer des conteneurs.
+                        </div>
+                     </div>
+                </div>
+
+                <!-- Ajout Section "Pour aller plus loin" -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">5. Pour aller plus loin (Révision)</h3>
+                    <p class="mb-3">Pour approfondir les concepts de cette semaine, consultez la documentation officielle :</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>
+                            <a href="https://www.docker.com/resources/what-container/" target="_blank" class="text-blue-500 hover:underline"> Docker : C'est quoi un conteneur ? </a>
+                        <li>
+                            <a href="https://docs.docker.com/get-started/overview/" target="_blank" class="text-blue-500 hover:underline">Vue d'ensemble de Docker (Docker Overview)</a>
+                        </li>
+                        <li>
+                            <a href="https://docs.docker.com/engine/" target="_blank" class="text-blue-500 hover:underline">Documentation du Docker Engine</a>
+                        </li>
+                        <li>
+                            <a href="https://docs.docker.com/get-started/docker_cheatsheet.pdf" target="_blank" class="text-blue-500 hover:underline">Fiche de commandes (Cheatsheet)</a>
+                        </li>
+                        <li>
+                            <a href="https://drive.google.com/file/d/1HCrLZ1bhJIhrYFYBINWVtEJnrnMn7RNQ/view?usp=sharing" target="_blank" class="text-blue-500 hover:underline"> Diapo du cours.    
+                        </li>
+                        <li>
+                            <a href="https://drive.google.com/drive/folders/1vLKVpvaM_-xABsG5fVEvRInm2tmkXzu3?usp=sharing" target="_blank" class="text-blue-500 hover:underline"> Installation de Docker </a>   
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- == ONGLET PRATIQUE == -->
+            <div id="content-pratique" class="tab-content space-y-6">
+
+                <!-- Section Installation -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">1. Installation de Docker</h3>
+                    <p>La méthode la plus simple pour Windows et macOS est <a href="https://www.docker.com/products/docker-desktop" target="_blank" class="text-blue-500 hover:underline">Docker Desktop</a>. Sur Linux, vous installerez <a href="https://docs.docker.com/engine/install/" target="_blank" class="text-blue-500 hover:underline">Docker Engine</a>.</p>
+                </div>
+
+                <!-- Section Vérification -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">2. Vérification de l'installation</h3>
+                    <p class="mb-2">Une fois installé, ouvrez un terminal et tapez ces commandes pour vérifier que le client et le daemon fonctionnent :</p>
+                    <div class="code-block">
+                        <pre><code class="language-bash">docker version</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    </div>
+                    <p class="my-2">Pour obtenir des informations détaillées sur votre installation (nombre d'images, de conteneurs, etc.) :</p>
+                    <div class="code-block">
+                        <pre><code class="language-bash">docker info</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    </div>
+                </div>
+
+                <!-- Section Premier conteneur -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">3. Exécuter son premier conteneur</h3>
+                    <p class="mb-2">L'image `hello-world` est une image de test qui vérifie que tout fonctionne. Elle va :
+                        <br>1. Télécharger l'image `hello-world` depuis Docker Hub (si elle n'existe pas localement).
+                        <br>2. Créer un conteneur à partir de cette image.
+                        <br>3. Exécuter le conteneur, qui affiche un message de confirmation.
+                        <br>4. S'arrêter.
+                    </p>
+                    <div class="code-block">
+                        <pre><code class="language-bash">docker run hello-world</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    </div>
+                </div>
+
+                <!-- Section Docker Hub -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">4. Explorer Docker Hub</h3>
+                    <p class="mb-3">
+                        <a href="https://hub.docker.com/" target="_blank" class="text-blue-500 hover:underline">Docker Hub</a> est le registre public par défaut, une immense bibliothèque d'images de conteneurs. C'est là que vous (et le daemon Docker) allez chercher les images.
+                    </p>
+                    <p class="mb-3">
+                        Lorsque vous faites <code class="bg-gray-200 px-1 rounded">docker run nginx</code>, Docker recherche l'image "nginx" localement. S'il ne la trouve pas, il la télécharge (pull) automatiquement depuis Docker Hub.
+                    </p>
+                
+                    <h4 class="font-semibold text-lg mb-2">Trouver du Contenu de Confiance (Trusted Content)</h4>
+                    <p class="mb-3">N'importe qui peut publier une image sur Docker Hub. Pour la sécurité et la stabilité, il est crucial de savoir quoi utiliser :</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-start bg-blue-50 p-3 rounded-lg border border-blue-200">
+                            <span class="text-2xl mr-3" title="Docker Official Image">🐳</span>
+                            <div>
+                                <strong class="font-semibold text-blue-800">Docker Official Image (Image Officielle)</strong>
+                                <p class="text-sm text-blue-700">Ce sont les meilleures. Maintenues et auditées par Docker et/ou les créateurs du logiciel (ex: <code class="bg-blue-100 px-1 rounded">python</code>, <code class="bg-blue-100 px-1 rounded">nginx</code>, <code class="bg-blue-100 px-1 rounded">mongo</code>). Elles sont sécurisées, à jour, et bien documentées. <strong>Toujours les privilégier.</strong></p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start bg-green-50 p-3 rounded-lg border border-green-200">
+                            <span class="text-2xl mr-3" title="Verified Publisher">✅</span>
+                            <div>
+                                <strong class="font-semibold text-green-800">Verified Publisher (Éditeur Vérifié)</strong>
+                                <p class="text-sm text-green-700">Images publiées directement par l'entreprise qui crée le logiciel (ex: <code class="bg-green-100 px-1 rounded">bitnami/mongodb</code>, <code class="bg-green-100 px-1 rounded">ubuntu/grafana</code>). C'est une excellente source de confiance, juste après les images officielles.</p>
+                            </div>
+                        </div>
+                
+                        <!-- Ajout de la section Sponsored Images -->
+                        <div class="flex items-start bg-purple-50 p-3 rounded-lg border border-purple-200">
+                            <span class="text-2xl mr-3" title="Sponsored Image">⭐</span>
+                            <div>
+                                <strong class="font-semibold text-purple-800">Sponsored Images (Images Sponsorisées)</strong>
+                                <p class="text-sm text-purple-700">Ce sont des images de type "Éditeur Vérifié" que Docker et ses partenaires commerciaux promeuvent. Elles sont fiables et sécurisées, mais leur mise en avant fait partie d'un accord commercial.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start bg-gray-50 p-3 rounded-lg border">
+                            <span class="text-2xl mr-3" title="Community Image">👤</span>
+                            <div>
+                                <strong class="font-semibold text-gray-800">Images Communautaires (Community)</strong>
+                                <p class="text-sm text-gray-700">Images publiées par des utilisateurs individuels (ex: <code class="bg-gray-100 px-1 rounded">nomutilisateur/mon-app</code>). Elles peuvent être très utiles, mais utilisez-les avec prudence. Vérifiez le Dockerfile, le nombre de téléchargements, et les mises à jour récentes.</p>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <h4 class="font-semibold text-lg mt-4 mb-2">Catégories et Filtres</h4>
+                    <p>Sur le site de Docker Hub, vous pouvez filtrer les résultats de recherche par :</Vp>
+                    <ul class="list-disc list-inside ml-4 mt-2 text-sm">
+                        <li><strong>Catégories :</strong> Base de données, Serveur Web, Outils de Dev, etc.</li>
+                        <li><strong>Type de contenu :</strong> Images Officielles, Éditeurs Vérifiés.</li>
+                        <li><strong>Architecture :</strong> <code class="bg-gray-200 px-1 rounded">amd64</code> (standard), <code class="bg-gray-200 px-1 rounded">arm64</code> (ex: Apple M1/M2, Raspberry Pi).</li>
+                    </ul>
+                </div>
+
+                 <!-- Section Conteneur Nginx -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">5. Lancer un conteneur Nginx</h3>
+                    <p class="mb-2">Lançons un serveur web Nginx qui tourne en arrière-plan et est accessible depuis notre navigateur.</p>
+                    <div class="code-block">
+                        <pre><code class="language-bash">docker run --name mon-serveur-web -d -p 8080:80 nginx</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    </div>
+                    <p class="mt-3 mb-2">Détails de la commande :</p>
+                    <ul class="list-disc list-inside bg-gray-50 p-4 rounded-md text-sm space-y-1">
+                        <li><code>--name mon-serveur-web</code> : Donne un nom lisible à notre conteneur (facultatif mais pratique).</li>
+                        <li><code>-d</code> (detached) : Exécute le conteneur en arrière-plan et affiche l'ID du conteneur.</li>
+                        <li><code>-p 8080:80</code> (publish) : Mappe le port <strong>8080</strong> de votre machine (hôte) au port <strong>80</strong> à l'intérieur du conteneur (où Nginx écoute).</li>
+                        <li><code>nginx</code> : Le nom de l'image à utiliser.</li>
+                    </ul>
+                    <!-- Ajout d'une section de dépannage -->
+                    <div class="mt-3 bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-sm">
+                        <p class="font-semibold text-yellow-800">Note de dépannage :</p>
+                        <p class="text-yellow-700">Si <code class="bg-yellow-100 px-1 rounded">http://localhost:8080</code> ne fonctionne pas, vérifiez que le port 8080 n'est pas déjà utilisé par une autre application sur votre machine. Si c'est le cas, essayez un autre port (ex: <code class="bg-yellow-100 px-1 rounded">-p 8081:80</code> et visitez <code class="bg-yellow-100 px-1 rounded">http://localhost:8081</code>).</p>
+                    </div>
+                    <p class="mt-3">
+                        Ouvrez maintenant votre navigateur et allez sur <a href="http://localhost:8080" target="_blank" class="text-blue-500 hover:underline">http://localhost:8080</a>.
+                        <br>Vous devriez voir la page d'accueil de Nginx !
+                    </p>
+                    <p class="mt-3 mb-2">Pour arrêter et supprimer le conteneur :</p>
+                    <div class="code-block">
+                        <pre><code class="language-bash">docker stop mon-serveur-web
+docker rm mon-serveur-web</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    </div>
+                </div>
+
+                <!-- Section Commandes de base -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">6. Commandes de base : `pull` et `run`</h3>
+                    <p class="mb-2"><code>docker pull</code> télécharge une image depuis un registre sans la démarrer.</p>
+                     <div class="code-block">
+                        <pre><code class="language-bash"># Télécharge la dernière image nginx
+docker pull nginx</code></pre>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    </div>
+
+                    <p class="mt-3 mb-2"><code>docker run</code> est la commande la plus courante. Elle combine plusieurs étapes :</p>
+                    <ol class="list-decimal list-inside bg-gray-50 p-4 rounded-md text-sm space-y-1">
+                        <li>(Si l'image n'est pas locale) <strong>Pull</strong> : Télécharge l'image (ex: `nginx`).</li>
+                        <li><strong>Create</strong> : Crée un conteneur à partir de l'image.</li>
+                        <li><strong>Start</strong> : Démarre le conteneur.</li>
+                    </ol>
+                </div>
+
+            </div>
+            
+            <!-- == ONGLET QCM == -->
+            <div id="content-qcm" class="tab-content space-y-6">
+                <h3 class="text-xl font-semibold text-blue-700">QCM : Testez vos connaissances</h3>
+                
+                <!-- Question 1 -->
+                <div class="bg-gray-50 p-4 rounded-lg border">
+                    <p class="font-semibold mb-3">1. Quelle est la différence fondamentale entre une VM et un conteneur ?</p>
+                    <div class="space-y-2">
+                        <div>
+                            <input type="radio" id="q1-a" name="q1" value="a" class="mr-2">
+                            <label for="q1-a">Les conteneurs sont plus lourds et plus lents à démarrer que les VMs.</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="q1-b" name="q1" value="b" class="mr-2">
+                            <label for="q1-b">Les VMs virtualisent le matériel (via un hyperviseur) tandis que les conteneurs partagent le noyau (kernel) de l'hôte.</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="q1-c" name="q1" value="c" class="mr-2">
+                            <label for="q1-c">Les VMs et les conteneurs n'ont aucune différence majeure.</label>
+                        </div>
+                    </div>
+                    <button class="mt-3 bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" onclick="checkAnswer('q1', 'b')">Vérifier</button>
+                    <p id="feedback-q1" class="qcm-feedback"></p>
+                </div>
+                
+                <!-- Question 2 -->
+                <div class="bg-gray-50 p-4 rounded-lg border">
+                    <p class="font-semibold mb-3">2. Quel composant de l'architecture Docker est le "serveur" qui gère les images et les conteneurs ?</p>
+                    <div class="space-y-2">
+                        <div>
+                            <input type="radio" id="q2-a" name="q2" value="a" class="mr-2">
+                            <label for="q2-a">Le Client Docker (CLI)</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="q2-b" name="q2" value="b" class="mr-2">
+                            <label for="q2-b">Docker Hub</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="q2-c" name="q2" value="c" class="mr-2">
+                            <label for="q2-c">Le Daemon Docker (Docker Engine)</label>
+                        </div>
+                    </div>
+                    <button class="mt-3 bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" onclick="checkAnswer('q2', 'c')">Vérifier</button>
+                    <p id="feedback-q2" class="qcm-feedback"></p>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-gray-50 p-4 rounded-lg border">
+                    <p class="font-semibold mb-3">3. Quelle commande télécharge une image depuis Docker Hub SANS démarrer de conteneur ?</p>
+                    <div class="space-y-2">
+                        <div>
+                            <input type="radio" id="q3-a" name="q3" value="a" class="mr-2">
+                            <label for="q3-a"><code>docker run nginx</code></label>
+                        </div>
+                        <div>
+                            <input type="radio" id="q3-b" name="q3" value="b" class="mr-2">
+                            <label for="q3-b"><code>docker pull nginx</code></label>
+                        </div>
+                        <div>
+                            <input type="radio" id="q3-c" name="q3" value="c" class="mr-2">
+                            <label for="q3-c"><code>docker start nginx</code></label>
+                        </div>
+                    </div>
+                    <button class="mt-3 bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" onclick="checkAnswer('q3', 'b')">Vérifier</button>
+                    <p id="feedback-q3" class="qcm-feedback"></p>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="bg-gray-50 p-4 rounded-lg border">
+                    <p class="font-semibold mb-3">4. Que signifie le paramètre <code>-p 8080:80</code> ?</p>
+                    <div class="space-y-2">
+                        <div>
+                            <input type="radio" id="q4-a" name="q4" value="a" class="mr-2">
+                            <label for="q4-a">Mapper le port 8080 de l'hôte au port 80 du conteneur.</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="q4-b" name="q4" value="b" class="mr-2">
+                            <label for="q4-b">Mapper le port 80 de l'hôte au port 8080 du conteneur.</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="q4-c" name="q4" value="c" class="mr-2">
+                            <label for="q4-c">Ouvrir les ports 80 et 8080 sur l'hôte.</label>
+                        </div>
+                    </div>
+                    <button class="mt-3 bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" onclick="checkAnswer('q4', 'a')">Vérifier</button>
+                    <p id="feedback-q4" class="qcm-feedback"></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour changer d'onglet
+        function showTab(tabName) {
+            // Cacher tous les contenus
+            document.getElementById('content-theorie').classList.remove('tab-content-active');
+            document.getElementById('content-pratique').classList.remove('tab-content-active');
+            document.getElementById('content-qcm').classList.remove('tab-content-active'); // Ajout QCM
+
+            // Désactiver tous les onglets
+            document.getElementById('tab-theorie').classList.remove('tab-active');
+            document.getElementById('tab-pratique').classList.remove('tab-active');
+            document.getElementById('tab-qcm').classList.remove('tab-active'); // Ajout QCM
+
+            // Afficher le contenu de l'onglet cliqué
+            document.getElementById('content-' + tabName).classList.add('tab-content-active');
+
+            // Activer l'onglet cliqué
+            document.getElementById('tab-' + tabName).classList.add('tab-active');
+        }
+
+        // Fonction pour copier le code
+        function copyToClipboard(button) {
+            const codeBlock = button.parentElement;
+            const codeElement = codeBlock.querySelector('code');
+            const code = codeElement.innerText;
+
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                button.innerText = 'Copié !';
+                setTimeout(() => {
+                    button.innerText = 'Copier';
+                }, 2000);
+            } catch (err) {
+                console.error('Erreur lors de la copie', err);
+                button.innerText = 'Erreur';
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // --- DÉBUT DE LA MODIFICATION ---
+
+        // Base de données des explications pour le QCM
+        const qcmExplanations = {
+            'q1': {
+                correct: "Correct ! Les VMs virtualisent le matériel et ont besoin d'un OS invité complet. Les conteneurs partagent le noyau de l'hôte, ce qui les rend beaucoup plus légers.",
+                incorrect: "Incorrect. C'est l'inverse : les conteneurs sont légers car ils partagent le noyau de l'hôte. Les VMs sont lourdes car elles émulent un OS complet."
+            },
+            'q2': {
+                correct: "Correct ! Le Daemon (ou Docker Engine) est le service d'arrière-plan qui exécute les commandes, gère les objets et écoute les requêtes de l'API.",
+                incorrect: "Incorrect. Le Client (CLI) envoie les commandes, et Docker Hub stocke les images. C'est le Daemon (Docker Engine) qui fait le travail."
+            },
+            'q3': {
+                correct: "Correct ! `docker pull` se contente de télécharger l'image. `docker run` la télécharge (si besoin) *et* la démarre.",
+                incorrect: "Incorrect. `docker run` démarre un conteneur (et télécharge l'image si besoin). `docker pull` ne fait que télécharger."
+            },
+            'q4': {
+                correct: "Correct ! Le format est toujours `-p <port_hôte>:<port_conteneur>`. Le trafic arrivant sur le port 8080 de la machine est redirigé vers le port 80 du conteneur.",
+                incorrect: "Incorrect. Le premier numéro (8080) est toujours le port de l'hôte (votre machine), et le second (80) est le port à l'intérieur du conteneur."
+            }
+        };
+
+        // Fonction pour vérifier les réponses du QCM (mise à jour)
+        function checkAnswer(questionId, correctAnswer) {
+            const feedbackElement = document.getElementById('feedback-' + questionId);
+            const radios = document.getElementsByName(questionId);
+            const explanations = qcmExplanations[questionId];
+            let selectedValue = null;
+
+            for (const radio of radios) {
+                if (radio.checked) {
+                    selectedValue = radio.value;
+                    break;
+                }
+            }
+
+            if (selectedValue === null) {
+                feedbackElement.innerText = "Veuillez sélectionner une réponse.";
+                feedbackElement.className = 'qcm-feedback qcm-incorrect'; // Utiliser le style "incorrect" pour l'avertissement
+                return;
+            }
+
+            if (selectedValue === correctAnswer) {
+                // Utilise innerHTML pour pouvoir mettre du gras
+                feedbackElement.innerHTML = `<strong>${explanations.correct}</strong>`; 
+                feedbackElement.className = 'qcm-feedback qcm-correct';
+            } else {
+                feedbackElement.innerHTML = `<strong>${explanations.incorrect}</strong>`;
+                feedbackElement.className = 'qcm-feedback qcm-incorrect';
+            }
+        }
+        // --- FIN DE LA MODIFICATION ---
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Préparation LFCS - Syllabus</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importation de la police Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Définition de la police par défaut */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style pour une transition douce de l'accordéon */
+        .accordion-content {
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Barre Latérale (Sidebar) -->
+        <!-- Elle est masquée sur mobile (-translate-x-full) et s'affiche sur clic du burger -->
+        <!-- Elle est visible en permanence sur les écrans moyens et plus (md:translate-x-0) -->
+
+
+        <!-- Conteneur Principal (Contenu + Header mobile) -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            
+            <!-- Header Mobile (Haut) -->
+            <header class="md:hidden flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700">
+                <span class="text-xl font-bold text-white">Documentation</span>
+                <!-- Bouton Burger pour ouvrir le menu -->
+                <button id="burger-btn" class="text-gray-400 hover:text-white" aria-label="Ouvrir le menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </header>
+
+            <!-- Contenu Principal (Droite) -->
+            <main class="flex-1 overflow-y-auto p-6 md:p-10">
+                <h1 class="text-4xl font-bold text-white mb-6"> Programme d'Introduction à Docker </h1>
+                <p class="text-lg text-gray-400 mb-10">
+                    Un programme d'introduction à la conteneurisation, de l'installation au déploiement d'applications multi-conteneurs.
+                </p>
+
+                <!-- Grille de Cartes -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- Carte 1 -->
+                    <a href="./fondamentaux.html" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> Les Fondamentaux </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Cette session couvre les concepts de base, la différence entre VMs et conteneurs, et l'architecture de Docker. L'objectif est de lancer son premier conteneur.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 2-1 -->
+                    <a href="/gestion_images.html" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> Gérer les Images et Conteneurs (partie 1) </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Apprendre à gérer le cycle de vie des conteneurs (créer, arrêter, supprimer) et des images (lister, effacer). Introduction au système de fichiers en couches.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 2-2 -->
+                    <a href="/gestion_conteneurs.html" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> Gérer les Images et Conteneurs (partie 2) </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Apprendre à gérer le cycle de vie des conteneurs (créer, arrêter, supprimer) et des images (lister, effacer). Introduction au système de fichiers en couches.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 3 -->
+                    <a href="#" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> Construire ses Images (Dockerfile) </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Session dédiée à la création d'images personnalisées. Nous écrirons nos premiers Dockerfile pour packager des outils ou des applications simples.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 4 -->
+                    <a href="#" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> Persistance des Données (Volumes) </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Comprendre pourquoi les conteneurs sont éphémères et comment sauvegarder les données durablement à l'aide des volumes et des bind mounts.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 5 -->
+                    <a href="#" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> Le Réseau Docker (Partie 1 - Bases) </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Comprendre pourquoi les conteneurs sont éphémères et comment sauvegarder les données durablement à l'aide des volumes et des bind mounts.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 6 -->
+                    <a href="#" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> Réseau (Pt 2) & Docker Compose </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Comprendre pourquoi les conteneurs sont éphémères et comment sauvegarder les données durablement à l'aide des volumes et des bind mounts.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 7 -->
+                    <a href="#" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> TP Étendu (Pt 1 - WordPress)  </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Comprendre pourquoi les conteneurs sont éphémères et comment sauvegarder les données durablement à l'aide des volumes et des bind mounts.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 8 -->
+                    <a href="#" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> TP Étendu (Pt 2 - Monitoring) </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Comprendre pourquoi les conteneurs sont éphémères et comment sauvegarder les données durablement à l'aide des volumes et des bind mounts.
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Carte 9 -->
+                    <a href="#" class="block bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border-t-4 border-blue-500">
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-white mb-2"> TP Étendu (Pt 2 - Monitoring) </h3>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Comprendre pourquoi les conteneurs sont éphémères et comment sauvegarder les données durablement à l'aide des volumes et des bind mounts.
+                            </p>
+                        </div>
+                    </a>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // --- Gestion du menu mobile ---
+            const burgerBtn = document.getElementById('burger-btn');
+            const closeBtn = document.getElementById('close-btn');
+            const sidebar = document.getElementById('sidebar');
+
+            if (burgerBtn && closeBtn && sidebar) {
+                // Ouvre le menu
+                burgerBtn.addEventListener('click', () => {
+                    sidebar.classList.remove('-translate-x-full');
+                });
+
+                // Ferme le menu
+                closeBtn.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+
+            // --- Gestion de l'accordéon ---
+            const accordions = document.querySelectorAll('.accordion-toggle');
+
+            accordions.forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling; // Le div .accordion-content
+                    const icon = button.querySelector('svg');
+
+                    // Vérifie si le contenu est déjà ouvert (s'il a une max-height)
+                    if (content.style.maxHeight) {
+                        // Il est ouvert, on le ferme
+                        content.style.maxHeight = null;
+                        if (icon) {
+                            icon.classList.remove('rotate-180');
+                        }
+                    } else {
+                        // Il est fermé, on l'ouvre
+                        // On définit max-height à la hauteur réelle du contenu
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        if (icon) {
+                            icon.classList.add('rotate-180');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
